@@ -1,3 +1,4 @@
+# GetYourYTSummary is a RAG based Q&A system based on the langchain, powered by GoogleGenerativeAi Chat Model 
 ## Model used for embedding is 'gemini-embedding-001'
 ## Chat Model used for questionnaire is 'gemini-2.5-flash-lite'
 #### Some snapshots of the project
