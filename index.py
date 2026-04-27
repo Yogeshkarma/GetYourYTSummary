@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 
 
 class Index:
-    def __init__(self,url_id):
+    def __init__(self, url_id):
         self.url_id = url_id
         self.transcript = None
         self.vector_store = None
@@ -19,14 +19,14 @@ class Index:
         self.model = None
         self.prompt = None
 
-    def text_splitter(self,transcript ):
-        text_spliiter=RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-        chunks=text_spliiter.create_documents([self.transcript])
+    def text_splitter(self, transcript):
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+        chunks = text_splitter.create_documents([transcript])
         embeddings = GoogleGenerativeAIEmbeddings(model='gemini-embedding-001')
         self.vector_store = FAISS.from_documents(chunks, embeddings)
 
     def retriever_engine(self):
-        self.retriever = vector_store.as_retriever(search_type='similarity', search_kwargs={"k": 4})
+        self.retriever = self.vector_store.as_retriever(search_type='similarity', search_kwargs={"k": 4})
 
     def modelling(self):
         self.model = ChatGoogleGenerativeAI(model='gemini-2.5-flash-lite')
@@ -41,11 +41,15 @@ class Index:
             input_variables=['content', 'question']
         )
 
-    def chaining(self):
+    def chaining(self, question):
         parser = StrOutputParser()
+
+        def format_docs(retrieved_docs):
+            return '\n\n'.join(doc.page_content for doc in retrieved_docs)
+
         parallel_chain = RunnableParallel({
-            'content': retriever | RunnableLambda(format_docs),
+            'content': self.retriever | RunnableLambda(format_docs),
             'question': RunnablePassthrough()
         })
-        main_chain = parallel_chain | prompt | model | parser
-        return main_chain
+        main_chain = parallel_chain | self.prompt | self.model | parser
+        return main_chain.invoke(question)
