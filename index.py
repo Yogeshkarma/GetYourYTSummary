@@ -1,13 +1,14 @@
 from Yt_api_call import *
 from langchain_community.vectorstores import FAISS
 from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
-from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled
-from youtube_transcript_api._errors import IpBlocked, NoTranscriptFound
+
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnableLambda, RunnableParallel, RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class Index:

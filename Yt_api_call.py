@@ -5,7 +5,7 @@ class Youtube_Fetcher:
         self.url_id=url_id
         self.transcript=None
 
-    def url_validator(self,url_id):
+    def url_validator(self):
         if "youtube.com" in self.url_id or "youtu.be" in self.url_id:
             if "watch?v=" in self.url_id:
                 return self.url_id.split("watch?v=")[-1].split("&")[0]
@@ -13,9 +13,10 @@ class Youtube_Fetcher:
                 return self.url_id.split("youtu.be/")[-1].split("?")[0]
         return self.url_id
 
-    def fetch_transcript(self,url_id):
-        self.transcript=YouTubeTranscriptApi().fetch(self.url_id,languages=[en,hi])
-        self.transcript = " ".join([chunk.get("text", "") for chunk in transcript_list])
+    def fetch_transcript(self):
+        video_id=self.url_validator()
+        self.transcript_list=YouTubeTranscriptApi().fetch(video_id,languages=['en','hi'])
+        self.transcript = " ".join([chunk.text for chunk in self.transcript_list])
         return self.transcript
 
 

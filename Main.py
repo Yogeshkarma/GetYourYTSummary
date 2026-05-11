@@ -1,4 +1,5 @@
 # main app is the top environment variable
-if __name__ == __main__:
+from app import App
+if __name__ == '__main__':
     app=App()
-    app.run
+    app.run()
